@@ -15,8 +15,14 @@ spl_autoload_register(function ($class) {
     }
 });
 
-// set content-type to json
-// header("Content-type: application/json; charset=UTF-8");
+
+//exception and error handlers
+set_error_handler("core\ErrorHandler::handleError");
+set_exception_handler("core\ErrorHandler::handleException");
+
+//set content-type to json
+header("Content-type: application/json; charset=UTF-8");
+
 
 $parts = explode("/", $_SERVER["REQUEST_URI"]);
 
@@ -25,10 +31,17 @@ if ($parts[4] != "notebook") {
     exit;
 }
 
-$id = $parts[5] ?? null;
+$id = isset($parts[5]) && $parts[5] !== '' ? $parts[5] : null;
+
+// var_dump($id); //check delete
 
 // var_dump($parts); //check delete
 
-$controller = new controllers\NotebookController;
+$database = new config\Database("localhost", "notebookdb", "notebookDB", "12345password");
+// $database->getConnection();
+
+$gateway = new gateways\NotebookGateway($database);
+
+$controller = new controllers\NotebookController($gateway);
 
 $controller->processRequest($_SERVER["REQUEST_METHOD"], $id);
