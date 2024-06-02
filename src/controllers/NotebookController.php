@@ -24,6 +24,49 @@ class NotebookController
 
   private function processResourceRequest(string $method, string $id): void
   {
+  	$contact = $this->gateway->get($id);
+
+  	//getting 404 if the contact does not exist
+  	if ( ! $contact) 
+  	{
+      http_response_code(404);
+      echo json_encode(["message" => "Contact is not found"]);
+      return;
+    }
+
+    switch($method) 
+    {
+    	case "GET":
+    		echo json_encode($contact);
+    		break;
+
+    	case "PATCH":
+
+    		$data = (array) json_decode(file_get_contents("php://input"), true);
+
+        // check any data errors
+        $errors = $this->getValidationErrors($data, false);
+                
+        if ( ! empty($errors)) 
+        {
+        	http_response_code(422);
+
+        	// sending the validation errors in the response body
+          echo json_encode(["errors" => $errors]);
+          break;
+        }
+
+        // if no errors, creating a new entry in the database
+        $rows = $this->gateway->update($contact, $data);
+
+        http_response_code(201);
+        echo json_encode([
+					"message" => "Contact $id updated",
+          "rows" => $rows
+        ]);
+        break;
+
+    }
 
   }
 
@@ -31,7 +74,8 @@ class NotebookController
 
   private function processCollectionRequest(string $method): void
   {
-      switch ($method) {
+      switch ($method) 
+      {
        case "GET":
         echo json_encode($this->gateway->getAll());
         break;
@@ -42,8 +86,9 @@ class NotebookController
 
         // check any data errors
         $errors = $this->getValidationErrors($data);
-        //        
-        if ( ! empty($errors)) {
+                
+        if ( ! empty($errors)) 
+        {
         	http_response_code(422);
 
         	// sending the validation errors in the response body
@@ -62,10 +107,10 @@ class NotebookController
         break;
         // var_dump($data);
             
-            // default:
-            //     http_response_code(405);
-            //     header("Allow: GET, POST");
-     }
+        default:
+          http_response_code(405);
+          header("Allow: GET, POST");
+     	}
   }
     
   private function getValidationErrors(array $data, bool $is_new = true): array 
@@ -82,15 +127,15 @@ class NotebookController
         $errors[] = "Phone is required";
     }
     
-    // check that email is not empty
-    if ($is_new && empty($data["email"])) {
-        $errors[] = "Email is required";
-    }
-    
     // validating email format
-    if (!filter_var($data["email"], FILTER_VALIDATE_EMAIL)) {
-        $errors[] = "Invalid email format";
-    }
+   if ($is_new && empty($data["email"])) 
+   {
+    	$errors[] = "Email is required";
+
+		} elseif (isset($data["email"]) && !filter_var($data["email"], FILTER_VALIDATE_EMAIL)) 
+		{
+    	$errors[] = "Invalid email format";
+		}
     
     // validating date of birth format
 		if (array_key_exists("date_of_birth", $data)) {
