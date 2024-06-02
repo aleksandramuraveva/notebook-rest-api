@@ -39,25 +39,105 @@ class NotebookController
        case "POST":
 
         $data = (array) json_decode(file_get_contents("php://input"), true);
+
+        // check any data errors
+        $errors = $this->getValidationErrors($data);
+        //        
+        if ( ! empty($errors)) {
+        	http_response_code(422);
+
+        	// sending the validation errors in the response body
+          echo json_encode(["errors" => $errors]);
+          break;
+        }
+
+        // if no errors, creating a new entry in the database
         $id = $this->gateway->create($data);
 
+        http_response_code(201);
         echo json_encode([
 					"message" => "Contact was created",
           "id" => $id
         ]);
         break;
         // var_dump($data);
-                
-          
+            
+            // default:
+            //     http_response_code(405);
+            //     header("Allow: GET, POST");
      }
   }
     
+  private function getValidationErrors(array $data, bool $is_new = true): array 
+  {
+  	$errors = [];
+
+  	// check that full_name is not empty
+    if ($is_new && empty($data["full_name"])) {
+        $errors[] = "Full name is required";
+    }
+    
+    // check that phone is not empty
+    if ($is_new && empty($data["phone"])) {
+        $errors[] = "Phone is required";
+    }
+    
+    // check that email is not empty
+    if ($is_new && empty($data["email"])) {
+        $errors[] = "Email is required";
+    }
+    
+    // validating email format
+    if (!filter_var($data["email"], FILTER_VALIDATE_EMAIL)) {
+        $errors[] = "Invalid email format";
+    }
+    
+    // validating date of birth format
+		if (array_key_exists("date_of_birth", $data)) {
+
+		    $date = \DateTime::createFromFormat('Y-m-d', $data["date_of_birth"]);
+
+		    $dateErrors = $date ? $date::getLastErrors() : null;
+
+				if ($date === false || ($dateErrors && $dateErrors["warning_count"] > 0)) 
+				{
+    			$errors[] = "Invalid date of birth format. Expected format is YYYY-MM-DD.";
+				}
+		}
 
 
+    // VALIDATING PHOTO PATH
 
+		$photoPath = null;
 
+		if (isset($data["photo_path"])) 
+		{
+			$photoPath = __DIR__ . '/../../' . $data["photo_path"];
+		}
+    
+    if ($photoPath && file_exists($photoPath)) 
+    {
+    	// Check file types
+  		$allowedTypes = ['jpg', 'jpeg', 'png', 'gif'];
+  		$fileType = pathinfo($photoPath, PATHINFO_EXTENSION);
 
+  		if (!in_array($fileType, $allowedTypes)) 
+  		{
+  			$errors[] = "Invalid photo file type. Allowed types are: " . implode(', ', $allowedTypes);
+  		}
 
+  		// Check file size (max 5MB)
+  		if (filesize($photoPath) > 5000000) 
+  		{
+  			$errors[] = "Photo file size is too large. Maximum size is 5MB.";
+  		}
 
+    } elseif ($photoPath && !file_exists($photoPath)) {
+    	$errors[] = "Photo file does not exist";
+    }
+
+    return $errors;
+
+  }
 
 }
