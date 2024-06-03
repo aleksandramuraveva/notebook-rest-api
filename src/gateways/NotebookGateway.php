@@ -90,6 +90,18 @@ class NotebookGateway
     return $stmt->rowCount();
 	}
 
-
+	public function delete(string $id): int 
+	{
+		$sql = "DELETE FROM notebook_entries
+            WHERE id = :id";
+                
+    $stmt = $this->conn->prepare($sql);
+        
+    $stmt->bindValue(":id", $id, \PDO::PARAM_INT);
+        
+    $stmt->execute();
+        
+    return $stmt->rowCount();
+	}
 
 }

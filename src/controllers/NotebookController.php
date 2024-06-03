@@ -36,10 +36,12 @@ class NotebookController
 
     switch($method) 
     {
+    	//GET
     	case "GET":
     		echo json_encode($contact);
     		break;
 
+    	//PATCH
     	case "PATCH":
 
     		$data = (array) json_decode(file_get_contents("php://input"), true);
@@ -66,6 +68,21 @@ class NotebookController
         ]);
         break;
 
+      //DELETE
+      case "DELETE":
+
+      	$rows = $this->gateway->delete($id);
+
+      	echo json_encode([
+      		"message" => "Contact $id deleted",
+          "rows" => $rows
+        ]);
+        break;
+
+      default:
+        http_response_code(405);
+        header("Allow: GET, PATCH, DELETE");
+
     }
 
   }
@@ -76,10 +93,13 @@ class NotebookController
   {
       switch ($method) 
       {
+
+      	//GET
        case "GET":
         echo json_encode($this->gateway->getAll());
-        break;
-                
+       	break;
+         
+       //POST       
        case "POST":
 
         $data = (array) json_decode(file_get_contents("php://input"), true);
