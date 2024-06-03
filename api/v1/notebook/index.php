@@ -46,12 +46,29 @@ $gateway = new gateways\NotebookGateway($database);
 
 $controller = new controllers\NotebookController($gateway);
 
-if ($page !== null) {
-    // calling a method that handles pagination
+$method = $_SERVER["REQUEST_METHOD"]; // Get the HTTP method
+
+if ($method === 'GET' && $page !== null) 
+{
+    // If a page number is provided, handle pagination
     $controller->getAllByPage($page, $limit);
-} elseif ($id !== null) {
-    $controller->processRequest($_SERVER["REQUEST_METHOD"], $id);
-} else {
-    // if no page or id is specified, default to the first page
+} elseif ($method === 'POST' || $method === 'GET' || $method === 'PATCH' || $method === 'DELETE') 
+{
+    // If it's a POST, GET, PATCH, or DELETE request, handle it as a collection request or resource request
+    $controller->processRequest($method, $id);
+    
+} else 
+{
+    // If no page or id is specified, default to the first page
     $controller->getAllByPage(1, $limit);
 }
+
+// if ($page !== null) {
+//     // calling a method that handles pagination
+//     $controller->getAllByPage($page, $limit);
+// } elseif ($id !== null) {
+//     $controller->processRequest($_SERVER["REQUEST_METHOD"], $id);
+// } else {
+//     // if no page or id is specified, default to the first page
+//     $controller->getAllByPage(1, $limit);
+// }
