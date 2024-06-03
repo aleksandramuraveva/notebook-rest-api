@@ -132,6 +132,13 @@ class NotebookController
           header("Allow: GET, POST");
      	}
   }
+
+  public function getAllByPage(int $page, int $limit = 10): void
+	{
+    $contacts = $this->gateway->getAll($page, $limit);
+
+    echo json_encode($contacts);
+	}
     
   private function getValidationErrors(array $data, bool $is_new = true): array 
   {

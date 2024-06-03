@@ -32,16 +32,26 @@ if ($parts[4] != "notebook") {
 }
 
 $id = isset($parts[5]) && $parts[5] !== '' ? $parts[5] : null;
+$page = isset($_GET['page']) ? (int)$_GET['page'] : null;
+//10 is default limit if not provided
+$limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
 
 // var_dump($id); //check delete
 
 // var_dump($parts); //check delete
 
-$database = new config\Database("localhost", "notebookdb", "notebookDB", "12345password");
-// $database->getConnection();
+
 
 $gateway = new gateways\NotebookGateway($database);
 
 $controller = new controllers\NotebookController($gateway);
 
-$controller->processRequest($_SERVER["REQUEST_METHOD"], $id);
+if ($page !== null) {
+    // calling a method that handles pagination
+    $controller->getAllByPage($page, $limit);
+} elseif ($id !== null) {
+    $controller->processRequest($_SERVER["REQUEST_METHOD"], $id);
+} else {
+    // if no page or id is specified, default to the first page
+    $controller->getAllByPage(1, $limit);
+}

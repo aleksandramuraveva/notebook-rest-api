@@ -11,20 +11,42 @@ class NotebookGateway
 		$this->conn = $database->getConnection();
 	}
 
-	public function getAll() : array 
+	public function getAll(int $page = 1, int $limit = 10) : array 
 	{
-		$sql = "SELECT * FROM notebook_entries";
+    // Calculate the offset for the SQL query
+    $offset = ($page - 1) * $limit;
 
-		$stmt = $this->conn->query($sql);
+    $sql = "SELECT * FROM notebook_entries LIMIT :limit OFFSET :offset";
+    $stmt = $this->conn->prepare($sql);
 
-		$data = [];
+    // Bind the limit and offset parameters
+    $stmt->bindValue(':limit', $limit, \PDO::PARAM_INT);
+    $stmt->bindValue(':offset', $offset, \PDO::PARAM_INT);
 
-		while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-			$data[] = $row;
-		}
+    $stmt->execute();
 
-		return $data;
+    $data = [];
+    while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+        $data[] = $row;
+    }
+
+    return $data;
 	}
+
+	// public function getAll() : array 
+	// {
+	// 	$sql = "SELECT * FROM notebook_entries";
+
+	// 	$stmt = $this->conn->query($sql);
+
+	// 	$data = [];
+
+	// 	while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
+	// 		$data[] = $row;
+	// 	}
+
+	// 	return $data;
+	// }
 
 
 	public function create(array $data): string
