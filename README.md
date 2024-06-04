@@ -88,7 +88,7 @@ Endpoint: GET http://localhost/notebook-rest-api/api/v1/notebook/?page={page_num
 
 Endpoint: POST http://localhost/notebook-rest-api/api/v1/notebook/
 <br>
-Заполните все, либо же толко обязательные поля в формате json
+Заполните все, либо же только обязательные поля в формате json
 <br>
 В API осуществляется валидация введенных данных, поэтому смотрите что не так 
 если получаете сообщение с ошибкой
