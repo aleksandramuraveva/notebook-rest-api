@@ -36,11 +36,10 @@ $page = isset($_GET['page']) ? (int)$_GET['page'] : null;
 //10 is default limit if not provided
 $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
 
-// var_dump($id); //check delete
-
-// var_dump($parts); //check delete
+//...!!!REPLACE WITH YOUR user name and password!!!...
 
 $database = new config\Database("localhost", "notebookdb", "notebook_user", "12345password");
+//.......................................................
 
 $gateway = new gateways\NotebookGateway($database);
 
