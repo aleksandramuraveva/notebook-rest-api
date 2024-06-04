@@ -29,7 +29,7 @@
  Найдите следующую строку номер 41:
 
   ``php
-  $database = новая конфигурация\база данных("localhost", "notebookdb", "notebook_user", "12345password");
+  $database = new config\Database("localhost", "notebookdb", "notebook_user", "12345password");
   ``
 
    Замените "localhost", "notebookdb", "notebook_user" и "12345password"
