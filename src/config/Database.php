@@ -14,7 +14,3 @@ class Database
         return new \PDO($dsn, $this->user, $this->password);
     }
 }
-
-
-
-//12345password 
