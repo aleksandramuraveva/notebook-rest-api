@@ -1,5 +1,10 @@
 # notebook-rest-api
- REST API PHP MySQL Swagger Docker
+ REST API PHP MySQL Swagger
+
+API работает, тестировала с помощью POSTMAN. Единственное метод POST через Swagger не отправляется.
+<br>
+Что-то не так с документацией этого метода в файле notebook.yaml предполагаю, поэтому такое поведение. 
+Но причину к сожалению не смогла найти.
 
 ## Инструкции по установке
 
@@ -38,7 +43,120 @@
 
 5. **Протестируйте API**: Теперь вы можете протестировать API.
 Это можно сделать с помощью таких инструментов, как Postman или curl.
-Отправляйте запросы к конечным точкам API и проверяйте ответы.
+Отправляйте запросы к endpoints API и проверяйте ответы.
+
+
+5. **Swagger**: Чтобы использовать Swagger можно скачать файлы по этому адресу
+   
+    <br>
+    ``https://github.com/swagger-api/swagger-ui/releases/tag/v5.17.14``
+   <br>
+   
+   Запустить его локально например
+   ``
+   http://localhost/swagger-ui-5.17.14/swagger-ui-5.17.14/dist/#/
+   ``
+   <br>
+   
+   Адрес будет зависеть от местоположения ваших файлов
+   <br>
+   
+   Запустите документацию введя следующую команду в поле для ввода и нажав "Explore"
+    <br>
+    
+   ``
+  http://localhost/notebook-rest-api/notebook.yaml
+   ``
+   
+   <br>
+## Endpoints 
+**Получить все контакты** <br>
+
+Endpoint: GET http://localhost/notebook-rest-api/api/v1/notebook/
+<br>
+
+По дефолту установлено что данный метод возвращает 1ю страницу с 10 записями
+
+
+**Получить контакты c пагинацией** <br>
+
+Endpoint: GET http://localhost/notebook-rest-api/api/v1/notebook/?page={page_number}&limit={limit}
+<br>
+Введите номер страницы и количество записей в поля page и limit соответственно
+
+**Создать новый контакт** <br>
+
+Endpoint: POST http://localhost/notebook-rest-api/api/v1/notebook/
+<br>
+Заполните все, либо же толко обязательные поля в формате json
+<br>
+В API осуществляется валидация введенных данных, поэтому смотрите что не так 
+если получаете сообщение с ошибкой
+<br>
+{
+<br>
+    "full_name": "Мария Иванова",
+    <br>
+    "company": "Фирма",
+    <br>
+    "email": "myemail@example.com",
+    <br>
+    "phone": "221-30-400",
+    <br>
+    "date_of_birth": "1993-10-23",
+    <br>
+    "photo_path": "uploads/placeholder.png"
+    <br>
+}
+<br>
+
+placeholder.png - картинка использутся для большинства контактов, можно свою загрузить
+
+
+
+**Получить один контакт по ID** <br>
+
+Endpoint: GET http://localhost/notebook-rest-api/api/v1/notebook/{id}
+<br>
+Введите номер в поле id
+
+
+**Редактировать контакт по ID** <br>
+
+Endpoint: PATCH http://localhost/notebook-rest-api/api/v1/notebook/{id}
+<br>
+Введите номер в поле id 
+<br>
+И также не забудьте указать какие поля меняете в формате json
+<br>
+{
+<br>
+    "full_name": "Мария Иванова",
+    <br>
+    "company": "Фирма",
+    <br>
+    "email": "myemail@example.com",
+    <br>
+    "phone": "221-30-400",
+    <br>
+    "date_of_birth": "1993-10-23",
+    <br>
+    "photo_path": "uploads/placeholder.png"
+    <br>
+}
+<br>
+
+placeholder.png - картинка использутся для большинства контактов, можно свою загрузить
+  
+
+**Удалить контакт по ID** <br>
+
+Endpoint: DELETE http://localhost/notebook-rest-api/api/v1/notebook/{id}
+<br>
+Введите номер в поле id 
+
+   
+
 
 
 
