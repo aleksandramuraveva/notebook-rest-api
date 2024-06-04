@@ -33,22 +33,6 @@ class NotebookGateway
     return $data;
 	}
 
-	// public function getAll() : array 
-	// {
-	// 	$sql = "SELECT * FROM notebook_entries";
-
-	// 	$stmt = $this->conn->query($sql);
-
-	// 	$data = [];
-
-	// 	while ($row = $stmt->fetch(\PDO::FETCH_ASSOC)) {
-	// 		$data[] = $row;
-	// 	}
-
-	// 	return $data;
-	// }
-
-
 	public function create(array $data): string
 	{
 		$sql = "INSERT INTO notebook_entries (full_name, company, phone, email, date_of_birth, photo_path)

@@ -1,0 +1,260 @@
+openapi: 3.0.0
+
+info:
+  title: Notebook REST API
+  version: 1.0
+servers:
+  - url: 'http://localhost/notebook-rest-api/api/v1'
+paths:
+  /notebook:
+#...........GET all contacts...................#
+    get:
+      summary: Get all contacts
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+          description: Page number
+        - name: limit
+          in: query
+          schema:
+            type: integer
+          description: Limit the number of contacts per page
+      responses:
+        '200':
+          description: An array of contacts
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Contact'
+        '405':
+          description: Invalid HTTP Method
+          headers:
+            Allow:
+              schema:
+                type: string
+              description: Allowed HTTP methods
+#...........POST contact...................#
+    post:
+      summary: Create a new contact
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NewContact'
+      responses:
+        '201':
+          description: Contact created
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: A message indicating the result of the operation
+                  id:
+                    type: integer
+                    description: The ID of the created contact
+        '422':
+          description: Validation errors
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: string
+        '405':
+          description: Invalid HTTP Method
+          headers:
+            Allow:
+              schema:
+                type: string
+              description: Allowed HTTP methods
+#...........GET one contact...................#
+  /notebook/{id}:
+    parameters:
+      - name: id
+        in: path
+        description: ID of contact
+        required: true
+        schema:
+          type: integer
+    get:
+      summary: Get a contact by ID
+      responses:
+        '200':
+          description: A single contact
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Contact'
+        '404':
+          description: Contact not found
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: A message indicating the result of the operation
+        '405':
+          description: Invalid HTTP Method
+          headers:
+            Allow:
+              schema:
+                type: string
+              description: Allowed HTTP methods
+#...........UPDATE a contact...................#             
+    patch:
+      summary: Update a contact by ID
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateContact'
+      responses:
+        '201':
+          description: Contact updated
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: A message indicating the result of the operation
+                  rows:
+                    type: integer
+                    description: The number of rows affected by the operation
+        '422':
+          description: Validation errors
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  errors:
+                    type: array
+                    items:
+                      type: string
+        '405':
+          description: Invalid HTTP Method
+          headers:
+            Allow:
+              schema:
+                type: string
+              description: Allowed HTTP methods
+ #...........DELETE a contact...................#             
+    delete:
+      summary: Delete a contact by ID
+      responses:
+        '200':
+          description: Contact deleted
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    description: A message indicating the result of the operation
+                  rows:
+                    type: integer
+                    description: The number of rows affected by the operation
+        '405':
+          description: Invalid HTTP Method
+          headers:
+            Allow:
+              schema:
+                type: string
+              description: Allowed HTTP methods
+
+#...............COMPONENTS..........................#
+components:
+  schemas:
+    Contact:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        full_name:
+          type: string
+          description: Full name of the contact (required)
+        company:
+          type: string
+          description: Company of the contact
+        phone:
+          type: string
+          description: Phone number of the contact (required)
+        email:
+          type: string
+          description: Email of the contact (required)
+        date_of_birth:
+          type: string
+          format: date
+          description: Date of birth of the contact
+        photo_path:
+          type: string
+          description: Path to the photo of the contact
+    NewContact:
+      NewContact:
+      type: object
+      properties:
+        full_name:
+          type: string
+          description: Full name of the contact (required)
+          example: "John Doe"
+        company:
+          type: string
+          description: Company of the contact
+          example: "Company Name"
+        phone:
+          type: string
+          description: Phone number of the contact (required)
+          example: "+1234567890"
+        email:
+          type: string
+          description: Email of the contact (required)
+          example: "email@example.com"
+        date_of_birth:
+          type: string
+          format: date
+          description: Date of birth of the contact
+          example: "2000-01-01"
+        photo_path:
+          type: string
+          description: Path to the photo of the contact
+          example: "uploads/placeholder.png"
+    UpdateContact:
+      type: object
+      properties:
+        full_name:
+          type: string
+          description: Full name of the contact (required)
+        company:
+          type: string
+          description: Company of the contact
+        phone:
+          type: string
+          description: Phone number of the contact (required)
+        email:
+          type: string
+          description: Email of the contact (required)
+        date_of_birth:
+          type: string
+          format: date
+          description: Date of birth of the contact
+        photo_path:
+          type: string
+          description: Path to the photo of the contact

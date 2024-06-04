@@ -40,7 +40,7 @@ $limit = isset($_GET['limit']) ? (int)$_GET['limit'] : 10;
 
 // var_dump($parts); //check delete
 
-
+$database = new config\Database("localhost", "notebookdb", "notebook_user", "12345password");
 
 $gateway = new gateways\NotebookGateway($database);
 
@@ -56,19 +56,9 @@ if ($method === 'GET' && $page !== null)
 {
     // If it's a POST, GET, PATCH, or DELETE request, handle it as a collection request or resource request
     $controller->processRequest($method, $id);
-    
+
 } else 
 {
     // If no page or id is specified, default to the first page
     $controller->getAllByPage(1, $limit);
 }
-
-// if ($page !== null) {
-//     // calling a method that handles pagination
-//     $controller->getAllByPage($page, $limit);
-// } elseif ($id !== null) {
-//     $controller->processRequest($_SERVER["REQUEST_METHOD"], $id);
-// } else {
-//     // if no page or id is specified, default to the first page
-//     $controller->getAllByPage(1, $limit);
-// }
